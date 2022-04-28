@@ -1,0 +1,7 @@
+---
+- name: Configure App
+  hosts: suricata
+  become: true
+
+  roles:
+    - ans-role-suricata

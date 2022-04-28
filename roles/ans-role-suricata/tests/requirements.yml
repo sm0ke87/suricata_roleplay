@@ -1,0 +1,5 @@
+---
+- src: https://github.com/sm0ke87/ans-role-suricata.git
+  scm: git
+  version: master
+  name: ans-role-suricata

@@ -1,0 +1,54 @@
+---
+- name: Add suricata stable repository from PPA and install its signing key on Ubuntu target
+  apt_repository:
+    repo: ppa:oisf/suricata-stable
+    state: present
+    update_cache: yes
+
+- name: Update apt-get repo and cache
+  become: true
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install required packages
+  become: true
+  apt:
+    name: suricata
+    state: present
+  # environment: '{{ proxy_env }}'
+
+- name: Change /etc/default/suricata
+  lineinfile:
+    dest: /etc/default/suricata
+    regexp: IFACE
+    line: IFACE = '{{ suricata_interface }}'
+
+- name: Suricata conf
+  template:
+    backup: yes
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - { src: 'suricata.j2', dest: '/etc/logrotate.d/suricata', owner: 'root', group: 'root', mode: '0640'}
+    - { src: 'suricata.yaml.j2', dest: '/etc/suricata/suricata.yaml', owner: 'root', group: 'root', mode: '0640'}
+  notify: restart service suricata
+
+- name: Refresh suricata sources
+  ansible.builtin.command: suricata-update update-sources
+
+- name: Add rules for surricata from PT
+  ansible.builtin.command: suricata-update enable-source ptresearch/attackdetection
+
+- name: Add rules for surricata from Oisf
+  ansible.builtin.command: suricata-update enable-source oisf/trafficid
+
+- name: Add rules for surricata from SSL-blacklist
+  ansible.builtin.command: suricata-update enable-source sslbl/ssl-fp-blacklist
+
+- name: Update suricata rules
+  ansible.builtin.command: suricata-update
+  notify: start service suricata

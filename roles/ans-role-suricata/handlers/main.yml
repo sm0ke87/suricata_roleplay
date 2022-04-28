@@ -1,0 +1,18 @@
+---
+- name: start service suricata
+  service:
+    name: started
+    state: suricata
+    enabled: yes
+
+- name: restart service suricata
+  service:
+    name: suricata
+    state: restarted
+    enabled: yes
+
+- name: stopped and disabled service suricata
+  service:
+    name: suricata
+    state: stopped
+    enabled: no

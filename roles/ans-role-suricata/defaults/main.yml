@@ -1,0 +1,15 @@
+---
+suricata_interface: vlan492
+suricata_networks: [10.4.90.0/24,10.4.91.0/24,10.4.92.0/24,10.4.93.0/24,10.4.94.0/24,10.4.95.0/24,10.4.96.0/24,172.16.6.64/27,172.16.6.96/27,195.19.208.192/28]
+
+suricata_update_enable: true
+suricata_update_sources:
+  - oisf/trafficid
+  - et/open
+  - ptresearch/attackdetection
+  - sslbl/ssl-fp-blacklist
+
+proxy_env:
+  - http_proxy: http://proxy:3128
+    https_proxy: http://proxy:3128
+
